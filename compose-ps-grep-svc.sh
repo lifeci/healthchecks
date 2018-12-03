@@ -12,7 +12,7 @@ while [[ "$COUNTER" -lt 10 ]]; do
   if [[ "$health" == *"Up (healthy)"* ]]; then
     printf "$COUNTER | $health\n";
     healthy=true
-    exit
+    break
   else
     printf "$COUNTER | $health\n";
   fi;
