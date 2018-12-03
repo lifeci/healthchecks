@@ -6,7 +6,7 @@ if [ -z $Delay ]; then Delay=1; fi
 
 #unset COUNTER; unset health; unset healthy;
 
-while [ "$COUNTER" -lt 10 ] || [ "$healthy" == 'true' ]; do
+while [ "$COUNTER" -lt 10 ] || [ "$healthy" != 'true' ]; do
   health=$(docker-compose  ps | grep $SvcName);
   let COUNTER=COUNTER+1; sleep $Delay;
   if [[ "$health" == *"Up (healthy)"* ]]; then
