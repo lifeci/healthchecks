@@ -1,7 +1,7 @@
 #!/bin/bash
 SvcName=$1
 Delay=$2;
-if [ -z $SvcName ]; then echo 'USAGE: compose-ps-grep-svc.sh $SvcName $Delay'; fi
+if [ -z $SvcName ]; then echo 'USAGE: compose-ps-grep-svc.sh $SvcName $Delay' && exit -2; fi
 if [ -z $Delay ]; then Delay=1; fi
 
 #unset COUNTER; unset health; unset healthy;
