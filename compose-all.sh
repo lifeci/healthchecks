@@ -17,43 +17,49 @@ list_svc(){
 }
 
 check_health_to_kv(){
-  if [ -z $paris ]; then
-    pairs=$(docker-compose ps -q | \
+    composeIDsCount=$(docker-compose ps -q | wc -l)
+    if [ ! -z $composeIDsCount ]; then
+      pairs=$(docker-compose ps -q | \
       xargs -n1 docker inspect -f '[{{ index .Config.Labels "com.docker.compose.service" }}]={{ .State.Health.Status }}' | \
       xargs -I {} echo HealthKV{} ); # Can't assign in pipeline. Eval is required as next step
-    eval $pairs;
-  else
-    echo "pairs is empty"; echo $pairs;
-  fi;  
+      eval $pairs;
+      HavePairs=true
+    fi
 }
 
 count_healthy_unhealthy(){
-  # 'i - case insens; v - inVert/negation'
+    # 'i - case insens; v - inVert/negation'
+    svc_count=$(docker-compose config --services | wc -l)
 
-  unhealthy_svc=$( list_svc | grep -i -v " HEALTHY" );
-  unhealthy_count=$( list_svc | grep -i -v " HEALTHY" | wc -l)
+    unhealthy_svc=$( list_svc | grep -i -v " HEALTHY" );
+    unhealthy_count=$( list_svc | grep -i -v " HEALTHY" | wc -l)
 
-  healthy_svc=$( list_svc | grep -i " HEALTHY" );
-  healthy_count=$( list_svc | grep -i " HEALTHY" | wc -l)
+    healthy_svc=$( list_svc | grep -i " HEALTHY" );
+    healthy_count=$( list_svc | grep -i " HEALTHY" | wc -l)
 }
 
 run_loop(){
   for attempt in $(seq 1 10); do
 
     check_health_to_kv
-    count_healthy_unhealthy
 
-    if [ $unhealthy_count != 0 ]; then
+    if [[ "$HavePairs" == "true" ]]; then
 
-          printf "\nATTEMPT $attempt : ${WARN}Waiting for ALL healthy state${NC}\n"
-          printf "unhealthy_count: $unhealthy_count | healthy_count: $healthy_count\n"
-          list_svc
-          sleep $Delay
+      count_healthy_unhealthy
+
+      if [ $healthy_count == $svc_count ]; then
+        printf "\nATTEMPT $attempt : ${OK}HEALTHY${NC}\n"
+        list_svc
+        return 0
+      else
+        printf "\nATTEMPT $attempt : ${WARN}Waiting for ALL healthy state${NC}\n"
+        printf "UNHEALTHY: $unhealthy_count / $composeIDsCount | HEALTHY: $healthy_count / $composeIDsCount\n";
+        list_svc
+      fi;
     else
-          printf "\nATTEMPT $attempt : ${OK}HEALTHY${NC}\n"
-          list_svc
-          return 0
-    fi
+      echo "composeIDsCount not greater then 0"
+    fi;
+    sleep $Delay
   done
 }
 
