@@ -17,11 +17,16 @@ list_svc(){
 }
 
 check_health_to_kv(){
-  pairs=$(docker-compose ps -q | \
-    xargs -n1 docker inspect -f '[{{ index .Config.Labels "com.docker.compose.service" }}]={{ .State.Health.Status }}' | \
-    xargs -I {} echo HealthKV{} ); # Can't assign in pipeline. Eval is required as next step
-  eval $pairs;
+  if [ -z $paris ]; then
+    pairs=$(docker-compose ps -q | \
+      xargs -n1 docker inspect -f '[{{ index .Config.Labels "com.docker.compose.service" }}]={{ .State.Health.Status }}' | \
+      xargs -I {} echo HealthKV{} ); # Can't assign in pipeline. Eval is required as next step
+    eval $pairs;
+  else
+    echo "pairs is empty"; echo $pairs;
+  fi;  
 }
+
 count_healthy_unhealthy(){
   # 'i - case insens; v - inVert/negation'
 
