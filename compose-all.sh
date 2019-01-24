@@ -1,6 +1,6 @@
 #!/bin/bash
-Delay=$1;
-if [ -z $Delay ]; then Delay=3; fi;
+DelayInput=$1;
+if [ -z $Delay ]; then Delay=$DelayInput; fi;
 
 unset HealthKV; declare -A HealthKV;
 # Color output in bash https://goo.gl/DsMWYq
