@@ -1,19 +1,17 @@
 #!/bin/bash
 # take value from argument as DelayInput
-if [ -z $1 ]; then
-  Delay=$DelayInput;
-else
-  DelayInput=$1;
+if [ ! -z $1 ]; then
+  Delay=$1; echo "Delay=$Delay (from argument)"
 fi;
 
 # set default '3' if no input OR take value from variable
-if [ -z $Delay ] && [ -z $DelayInput ] ; then
-  Delay=3;
-else
-  Delay=$DelayInput;
+if [ -z $Delay ] && [ ! -z $DelayInput ] ; then
+  Delay=$DelayInput; echo "Delay=$Delay (from env variable DelayInput)"
+elif [ -z $Delay ] && [ -z $DelayInput ] ; then
+  Delay=3; echo "Delay=$Delay (default)"
 fi;
 
-echo "DelayInput: $DelayInput | Delay: $Delay";
+#echo "DelayInput: $DelayInput | Delay: $Delay";
 unset HealthKV; declare -A HealthKV;
 # Color output in bash https://goo.gl/DsMWYq
   ERROR='\033[0;31m'; #RED
