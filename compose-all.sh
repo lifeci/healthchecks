@@ -1,12 +1,12 @@
 #!/bin/bash
-# take value from argument
+# take value from argument as DelayInput
 if [ -z $1 ]; then
   Delay=$DelayInput;
 else
   DelayInput=$1;
 fi;
-echo "DelayInput: $DelayInput | Delay: $Delay";
-# take value from variable
+
+# set default '3' if no input OR take value from variable
 if [ -z $Delay ] && [ -z $DelayInput ] ; then
   Delay=3;
 else
