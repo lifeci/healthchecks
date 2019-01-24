@@ -1,7 +1,19 @@
 #!/bin/bash
-DelayInput=$1;
-if [ -z $DelayInput ]; then Delay=3; else Delay=$DelayInput; fi;
+# take value from argument
+if [ -z $1 ]; then
+  Delay=$DelayInput;
+else
+  DelayInput=$1;
+fi;
+echo "DelayInput: $DelayInput | Delay: $Delay";
+# take value from variable
+if [ -z $Delay ] && [ -z $DelayInput ] ; then
+  Delay=3;
+else
+  Delay=$DelayInput;
+fi;
 
+echo "DelayInput: $DelayInput | Delay: $Delay";
 unset HealthKV; declare -A HealthKV;
 # Color output in bash https://goo.gl/DsMWYq
   ERROR='\033[0;31m'; #RED
