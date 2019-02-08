@@ -59,6 +59,7 @@ run_loop(){
 
       if [ $healthy_count == $svc_count ]; then
         printf "\nATTEMPT $attempt : ${OK}HEALTHY${NC}\n"
+        healthy_all='true';
         list_svc
         return 0
       else
@@ -74,3 +75,12 @@ run_loop(){
 }
 
 run_loop
+
+
+if [[ "$healthy_all" == 'true' ]]; then
+  echo "ALL RIGHT!";
+  exit 0
+else
+  echo "ALL BAD :(";
+  exit -1
+fi
