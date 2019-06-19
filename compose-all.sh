@@ -12,6 +12,18 @@ elif [ -z $Delay ] && [ -z $DelayInput ] ; then
 fi;
 
 #echo "DelayInput: $DelayInput | Delay: $Delay";
+# Check is Delay have one value or many
+if [[ "$Delay" == *"/"* ]]; then
+  PartA=` echo $Delay | awk 'BEGIN { FS = "/" } ; {print $1}' `;
+  PartB=` echo $Delay | awk 'BEGIN { FS = "/" } ; {print $2}' `;
+  Delay=$PartA
+  MAX_ATTEMPTS=$PartB
+  echo "MULTI:: Delay: $Delay | MAX_ATTEMPTS: $MAX_ATTEMPTS";
+else
+  MAX_ATTEMPTS=10
+  echo "UNO:: Delay: $Delay | MAX_ATTEMPTS: $MAX_ATTEMPTS";
+fi;
+
 unset HealthKV; declare -A HealthKV;
 # Color output in bash https://goo.gl/DsMWYq
   ERROR='\033[0;31m'; #RED
@@ -49,7 +61,7 @@ count_healthy_unhealthy(){
 }
 
 run_loop(){
-  for attempt in $(seq 1 10); do
+  for attempt in $(seq 1 ${MAX_ATTEMPTS}); do
 
     check_health_to_kv
 
